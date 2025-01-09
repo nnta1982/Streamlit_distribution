@@ -15,8 +15,8 @@ def fitting(sample: np.array, chart='pdf', n_top=3, figsize=(8,6), fontsize=8, e
 # Hàm tạo dữ liệu demo
 def load_demo_data():
     # Tạo các mẫu có kích thước khác nhau
-    sample1 = np.random.normal(loc=0, scale=1, size=250)
-    sample2 = np.random.normal(loc=2, scale=1.5, size=100)
+    sample1 = np.random.normal(loc=0, scale=1, size=300)
+    sample2 = np.random.normal(loc=2, scale=1.5, size=200)
     sample3 = np.random.normal(loc=1, scale=1.5, size=150)
     
     # Chọn số lượng phần tử lớn nhất (size max)
