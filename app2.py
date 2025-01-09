@@ -93,10 +93,10 @@ if df is not None:
 
             # Vẽ biểu đồ histogram
             fig_hist, ax_hist = plt.subplots(figsize=(6, 4))
-            ax_hist.hist(sample, bins=bin_size, alpha=0.6, color=color, edgecolor=edge_color, label=col,density=True)
-            ax_hist.set_title(f'Histogram: {col}')
-            ax_hist.set_xlabel('Values')
-            ax_hist.set_ylabel('Frequency')
+            ax_hist.hist(sample, bins=bin_size, alpha=0.6, color=color, edgecolor=edge_color, label=col)
+            ax_hist.set_title(f'Histogram của cột: {col}')
+            ax_hist.set_xlabel('Giá trị')
+            ax_hist.set_ylabel('Tần suất')
             ax_hist.legend()
 
             # Vẽ biểu đồ fitting với tham số `n_top` từ lựa chọn của người dùng
@@ -114,25 +114,13 @@ if df is not None:
 
             # Lưu mẫu tạo ra vào danh sách
             generated_samples.append(generated_sample)
-                        # Tính P10, P50 (median), P90 của tổng mẫu tạo ra
-            p10 = np.percentile(generated_sample , 10)
-            p50 = np.percentile(generated_sample , 50)
-            p90 = np.percentile(generated_sample , 90)
-            
-
-
 
             # Vẽ histogram của các mẫu được tạo ra
             fig_generated_hist, ax_generated_hist = plt.subplots(figsize=(6, 4))
-            ax_generated_hist.hist(generated_sample, bins=bin_size, alpha=0.6, color='#607B8B', edgecolor=edge_color,density=True)
-            # Thêm các chỉ số P10, P50, P90 vào biểu đồ
-            ax_generated_hist.axvline(p10, color='g', linestyle='dashed', linewidth=2, label=f'P10 = {p10:.2f}')
-            ax_generated_hist.axvline(p50, color='b', linestyle='dashed', linewidth=2, label=f'P50 = {p50:.2f}')
-            ax_generated_hist.axvline(p90, color='r', linestyle='dashed', linewidth=2, label=f'P90 = {p90:.2f}')
-            
-            ax_generated_hist.set_title(f'Histogram {col}')
-            ax_generated_hist.set_xlabel('Values')
-            ax_generated_hist.set_ylabel('Frequency')
+            ax_generated_hist.hist(generated_sample, bins=bin_size, alpha=0.6, color='#607B8B', edgecolor=edge_color, label=f"Generated {col}")
+            ax_generated_hist.set_title(f'Histogram của mẫu được tạo ra từ {col}')
+            ax_generated_hist.set_xlabel('Giá trị')
+            ax_generated_hist.set_ylabel('Tần suất')
             ax_generated_hist.legend()
 
             # Hiển thị biểu đồ histogram mẫu tạo ra
@@ -154,18 +142,18 @@ if df is not None:
 
             # Vẽ histogram tổng hợp của hai mẫu đã tạo ra với bin size người dùng chọn
             fig_total_hist, ax_total_hist = plt.subplots(figsize=(6, 4))
-            ax_total_hist.hist(total_generated_sample, bins=bin_size_total, alpha=0.6, color='#607B8B', edgecolor=edge_color,density=True)
+            ax_total_hist.hist(total_generated_sample, bins=bin_size_total, alpha=0.6, color='#607B8B', edgecolor=edge_color, label='Tổng mẫu tạo ra')
             
             # Thêm các chỉ số P10, P50, P90 vào biểu đồ
             ax_total_hist.axvline(p10, color='g', linestyle='dashed', linewidth=2, label=f'P10 = {p10:.2f}')
-            ax_total_hist.axvline(p50, color='b', linestyle='dashed', linewidth=2, label=f'P50 = {p50:.2f}')
+            ax_total_hist.axvline(p50, color='b', linestyle='dashed', linewidth=2, label=f'P50 (Median) = {p50:.2f}')
             ax_total_hist.axvline(p90, color='r', linestyle='dashed', linewidth=2, label=f'P90 = {p90:.2f}')
 
             # Thêm legend cho P10, P50, P90
             ax_total_hist.legend()
 
             # Hiển thị biểu đồ tổng hợp với các chỉ số P10, P50, P90
-            st.subheader('Histogram P10, P50, P90')
+            st.subheader('Histogram tổng hợp của hai mẫu tạo ra với P10, P50, P90')
             st.pyplot(fig_total_hist)
 
             # Lưu hình ảnh biểu đồ tổng hợp vào file PNG với DPI do người dùng chọn
