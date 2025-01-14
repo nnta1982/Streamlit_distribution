@@ -12,7 +12,13 @@ def fitting(sample: np.array, distr_method:Literal["full","popular"],chart='pdf'
     dfit.fit_transform(sample)
     fig, _ = dfit.plot(chart=chart, n_top=n_top, figsize=figsize, fontsize=fontsize, emp_properties=emp_properties, cii_properties=cii_properties)
     return dfit, fig
-
+def plot_fig(dfit,data):
+    fig, ax = plt.subplots(2,2, figsize=(15, 10))
+    dfit.plot(chart='PDF', ax=ax[0,0], cii_properties=None,fontsize=10)
+    dfit.plot(chart='CDF', ax=ax[0,1], cii_properties=None,fontsize=10)
+    dfit.qqplot(data,n_top=5,ax=ax[1,0],fontsize=8)
+    dfit.plot_summary(ax=ax[1,1],fontsize=8)
+    return fig
 # Hàm tạo dữ liệu demo
 def load_demo_data():
     # Tạo các mẫu có kích thước khác nhau
@@ -37,41 +43,41 @@ def load_demo_data():
     return pd.DataFrame(data)
 
 # Tạo giao diện cho người dùng chọn dữ liệu
-st.title('Tìm Bestfitting và Cộng Distribution')
+st.title('Find Bestfitting And Sum Distribution')
 
-data_option = st.selectbox('Chọn dữ liệu:', ['Tải lên dữ liệu CSV', 'Dữ liệu mẫu ngẫu nhiên (size khác nhau)'])
-method_option = st.selectbox('Chọn danh sách phân phối:', ['popular', 'full'])
+data_option = st.selectbox('Select Data:', ['Upload CSV File', 'Random data (Different size)'])
+method_option = st.selectbox('Select list of distribution:', ['popular', 'full'])
 # Khởi tạo biến df là None
 df = None
 
-if data_option == 'Tải lên dữ liệu CSV':
-    uploaded_file = st.file_uploader("Tải lên file CSV", type="csv")
+if data_option == 'Upload CSV File':
+    uploaded_file = st.file_uploader("Upload CSV File", type="csv")
     if uploaded_file is not None:
         df = pd.read_csv(uploaded_file)
-        st.subheader('Dữ liệu CSV đã tải lên:')
+        st.subheader('CSV data:')
         st.write(df)
     else:
-        st.warning("Vui lòng tải lên một file CSV.")
+        st.warning("Please upload one Csv file.")
 else:
     # Nếu chọn dữ liệu mẫu, sử dụng dữ liệu demo đã tạo
     df = load_demo_data()
-    st.subheader('Dữ liệu mẫu:')
+    st.subheader('Random sample data:')
     st.write(df)
 
 # Kiểm tra xem df có tồn tại hay không trước khi tiếp tục
 if df is not None:
     columns = df.columns.tolist()
-    selected_columns = st.multiselect("Chọn các cột để vẽ Histogram và Fitting", columns)
+    selected_columns = st.multiselect("Select columns to plot Histogram and Find Fitting", columns)
 
     # Thêm tùy chọn `n_top` để thay đổi số lượng phân phối tốt nhất được hiển thị
-    n_top = st.slider("Chọn số lượng phân phối tốt nhất (n_top)", min_value=1, max_value=10, value=3)
+    n_top = st.slider("Select number of best fit lines (n_top)", min_value=1, max_value=10, value=3)
 
     # Tùy chọn cho n khi tạo mẫu mới
-    n_samples = st.slider("Chọn số lượng mẫu tạo ra từ phân phối (n)", min_value=100, max_value=5000, value=10000)
+    n_samples = st.slider("Select generated samples (n)", min_value=100, max_value=5000, value=10000)
 
     # Kiểm tra xem người dùng đã chọn cột chưa
     if len(selected_columns) > 0:
-        st.subheader('Biểu đồ Histogram và Fitting của các cột đã chọn')
+        st.subheader('Histogram and Fitting of Selected columns')
 
         # Tạo cột để hiển thị biểu đồ cạnh nhau
         num_charts = len(selected_columns)
@@ -85,13 +91,13 @@ if df is not None:
             sample = df[col].dropna().values  # Lấy mẫu không có giá trị NaN
             
             # Tùy chọn màu cho biểu đồ (mặc định là màu '#C41E3A')
-            color = st.color_picker(f"Chọn màu cho cột {col}", '#607B8B')  # Màu mặc định là '#C41E3A'
+            color = st.color_picker(f"Select color for column {col}", '#607B8B')  # Màu mặc định là '#C41E3A'
             
             # Tùy chọn bin size cho biểu đồ
-            bin_size = st.slider(f"Chọn bin size cho cột {col}", min_value=5, max_value=50, value=30, step=5)  # Mặc định là 30
+            bin_size = st.slider(f"Select bin size for column {col}", min_value=5, max_value=50, value=30, step=5)  # Mặc định là 30
             
             # Tùy chọn màu viền cho histogram
-            edge_color = st.color_picker(f"Chọn màu viền cho cột {col}", '#5A5A5A')  # Màu viền mặc định là đen
+            edge_color = st.color_picker(f"Select edge color for column {col}", '#5A5A5A')  # Màu viền mặc định là đen
 
             # Vẽ biểu đồ histogram
             fig_hist, ax_hist = plt.subplots(figsize=(6, 4))
@@ -102,11 +108,17 @@ if df is not None:
             ax_hist.legend()
 
             # Vẽ biểu đồ fitting với tham số `n_top` từ lựa chọn của người dùng
-            dfit, fig_fitting = fitting(sample, method_option,chart='pdf', n_top=n_top, figsize=(8,6), fontsize=8)
+            dfit, fig_fitting = fitting(sample, method_option,chart='pdf', n_top=n_top, figsize=(8,6), fontsize=8)   
+
+            # columns_for_charts[i].pyplot(fig_fitting)
             
             # Hiển thị các biểu đồ vào mỗi cột
             columns_for_charts[i].pyplot(fig_hist)
             columns_for_charts[i].pyplot(fig_fitting)
+            #QC charts
+
+            qc_plot=plot_fig(dfit=dfit,data=sample)
+            columns_for_charts[i].pyplot(qc_plot)
 
             # Tạo mẫu mới từ phân phối đã ước lượng (1000 mẫu)
             generated_sample = dfit.generate(n=n_samples)  # Sử dụng giá trị n đã chọn từ người dùng
@@ -120,9 +132,6 @@ if df is not None:
             p10 = np.percentile(generated_sample , 10)
             p50 = np.percentile(generated_sample , 50)
             p90 = np.percentile(generated_sample , 90)
-            
-
-
 
             # Vẽ histogram của các mẫu được tạo ra
             fig_generated_hist, ax_generated_hist = plt.subplots(figsize=(6, 4))
@@ -132,7 +141,7 @@ if df is not None:
             ax_generated_hist.axvline(p50, color='b', linestyle='dashed', linewidth=2, label=f'P50 = {p50:.2f}')
             ax_generated_hist.axvline(p90, color='r', linestyle='dashed', linewidth=2, label=f'P90 = {p90:.2f}')
             
-            ax_generated_hist.set_title(f'Histogram {col}')
+            ax_generated_hist.set_title(f'Histogram of Generated sample {i+1}')
             ax_generated_hist.set_xlabel('Values')
             ax_generated_hist.set_ylabel('Frequency')
             ax_generated_hist.legend()
@@ -144,10 +153,10 @@ if df is not None:
         if len(generated_samples) >= 2:
             total_generated_sample = np.concatenate(generated_samples)
             # Tùy chọn chỉnh bin size cho histogram tổng hợp
-            bin_size_total = st.slider("Chọn bin size cho histogram tổng hợp", min_value=5, max_value=50, value=30, step=5)
+            bin_size_total = st.slider("Select bin size for SUMMATION Histogram", min_value=5, max_value=50, value=30, step=5)
 
             # Tùy chọn DPI khi lưu hình ảnh
-            dpi = st.slider("Chọn độ phân giải DPI khi lưu hình", min_value=50, max_value=300, value=150, step=50)
+            dpi = st.slider("Select image dpi", min_value=50, max_value=300, value=150, step=50)
 
             # Tính P10, P50 (median), P90 của tổng mẫu tạo ra
             p10 = np.percentile(total_generated_sample, 10)
@@ -174,11 +183,11 @@ if df is not None:
             img_bytes = io.BytesIO()
             fig_total_hist.savefig(img_bytes, format='png', dpi=dpi)  # Sử dụng DPI người dùng chọn
             img_bytes.seek(0)
-            st.download_button(label="Tải hình ảnh Histogram tổng hợp", data=img_bytes, file_name="total_histogram.png", mime="image/png")
+            st.download_button(label="Download image of SUMMATION Histogram", data=img_bytes, file_name="total_histogram.png", mime="image/png")
 
             # Lưu dữ liệu vào file CSV
             total_sample_df = pd.DataFrame(total_generated_sample, columns=["Generated Sample"])
             csv_bytes = total_sample_df.to_csv(index=False).encode()
-            st.download_button(label="Tải dữ liệu tổng hợp", data=csv_bytes, file_name="generated_samples.csv", mime="text/csv")
+            st.download_button(label="Download SUMMATION Data", data=csv_bytes, file_name="generated_samples.csv", mime="text/csv")
 else:
-    st.error("Vui lòng tải lên dữ liệu hoặc chọn dữ liệu mẫu.")
+    st.error("Please upload data or select random samples.")
