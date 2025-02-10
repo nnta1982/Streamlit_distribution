@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from distfit import distfit
 import io
 from typing import Literal
+##update bins
 
 # Hàm fitting cho việc vẽ các phân phối
 def fitting(sample: np.array, distr_method:Literal["full","popular"],chart='pdf', n_top=3, bins=50,
