@@ -7,8 +7,9 @@ import io
 from typing import Literal
 
 # Hàm fitting cho việc vẽ các phân phối
-def fitting(sample: np.array, distr_method:Literal["full","popular"],chart='pdf', n_top=3, figsize=(8,6), fontsize=8, emp_properties=None, cii_properties=None):
-    dfit = distfit(alpha=0.01,distr=distr_method)
+def fitting(sample: np.array, distr_method:Literal["full","popular"],chart='pdf', n_top=3, bins=50,
+                            figsize=(8,6), fontsize=8, emp_properties=None, cii_properties=None):
+    dfit = distfit(alpha=0.01,distr=distr_method,bins=bins)
     dfit.fit_transform(sample)
     fig, _ = dfit.plot(chart=chart, n_top=n_top, figsize=figsize, fontsize=fontsize, emp_properties=emp_properties, cii_properties=cii_properties)
     return dfit, fig
@@ -108,7 +109,7 @@ if df is not None:
             ax_hist.legend()
 
             # Vẽ biểu đồ fitting với tham số `n_top` từ lựa chọn của người dùng
-            dfit, fig_fitting = fitting(sample, method_option,chart='pdf', n_top=n_top, figsize=(8,6), fontsize=8)   
+            dfit, fig_fitting = fitting(sample, method_option,chart='pdf', n_top=n_top, figsize=(8,6), bins=bin_size,fontsize=8)   
 
             # columns_for_charts[i].pyplot(fig_fitting)
             
