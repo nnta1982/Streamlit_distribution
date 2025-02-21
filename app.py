@@ -96,7 +96,7 @@ if df is not None:
             color = st.color_picker(f"Select color for column {col}", '#607B8B')  # Màu mặc định là '#C41E3A'
             
             # Tùy chọn bin size cho biểu đồ
-            bin_size = st.slider(f"Select bin size for column {col}", min_value=5, max_value=50, value=30, step=5)  # Mặc định là 30
+            bin_size = st.slider(f"Select bin size for column {col}", min_value=5, max_value=500, value=30, step=5)  # Mặc định là 30
             
             # Tùy chọn màu viền cho histogram
             edge_color = st.color_picker(f"Select edge color for column {col}", '#5A5A5A')  # Màu viền mặc định là đen
@@ -155,7 +155,7 @@ if df is not None:
         if len(generated_samples) >= 2:
             total_generated_sample = np.concatenate(generated_samples)
             # Tùy chọn chỉnh bin size cho histogram tổng hợp
-            bin_size_total = st.slider("Select bin size for SUMMATION Histogram", min_value=5, max_value=50, value=30, step=5)
+            bin_size_total = st.slider("Select bin size for SUMMATION Histogram", min_value=5, max_value=500, value=30, step=5)
 
             # Tùy chọn DPI khi lưu hình ảnh
             dpi = st.slider("Select image dpi", min_value=50, max_value=300, value=150, step=50)
