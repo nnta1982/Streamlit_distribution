@@ -87,6 +87,7 @@ if df is not None:
 
         # Khởi tạo danh sách để lưu mẫu tạo ra
         generated_samples = []
+        dct_generated_samples={}
 
         # Vẽ histogram và fitting cho mỗi cột đã chọn
         for i, col in enumerate(selected_columns):
@@ -129,7 +130,7 @@ if df is not None:
             generated_sample = np.clip(generated_sample, sample.min(), sample.max())
 
             # Lưu mẫu tạo ra vào danh sách
-            generated_samples.append(generated_sample)
+            dct_generated_samples[col]=generated_sample
                         # Tính P10, P50 (median), P90 của tổng mẫu tạo ra
             p10 = np.percentile(generated_sample , 10)
             p50 = np.percentile(generated_sample , 50)
@@ -152,8 +153,8 @@ if df is not None:
             columns_for_charts[i].pyplot(fig_generated_hist)
 
         # Tính tổng của hai mẫu tạo ra
-        if len(generated_samples) >= 2:
-            total_generated_sample = np.concatenate(generated_samples)
+        if len(dct_generated_samples) >= 2:
+            total_generated_sample = np.sum(list(dct_generated_samples.values()), axis=0)  #tính tổng các generated sample theo position         
             # Tùy chọn chỉnh bin size cho histogram tổng hợp
             bin_size_total = st.slider("Select bin size for SUMMATION Histogram", min_value=1, max_value=500, value=30, step=1)
 
