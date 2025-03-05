@@ -5,10 +5,11 @@ import matplotlib.pyplot as plt
 from distfit import distfit
 import io
 from typing import Literal
+import scipy.stats as stat
 ##update bins with main
 
 # Hàm fitting cho việc vẽ các phân phối
-def fitting(sample: np.array, distr_method:Literal["full","popular"],chart='pdf', n_top=3, bins=50,
+def fitting(sample: np.array, distr_method:str,chart='pdf', n_top=3, bins=50,
                             figsize=(8,6), fontsize=8, emp_properties=None, cii_properties=None):
     dfit = distfit(alpha=0.01,distr=distr_method,bins=bins)
     dfit.fit_transform(sample)
@@ -44,11 +45,32 @@ def load_demo_data():
     }
     return pd.DataFrame(data)
 
+# Fitting method
+
+out_distr = [stat.alpha, stat.anglit, stat.arcsine, stat.beta, stat.betaprime, stat.bradford, stat.burr, stat.cauchy,
+            stat.chi, stat.chi2, stat.cosine, stat.dgamma, stat.dweibull, stat.erlang, stat.expon, stat.exponnorm,
+            stat.exponweib, stat.exponpow, stat.f, stat.fatiguelife, stat.fisk, stat.foldcauchy, stat.foldnorm,
+            stat.genlogistic, stat.genpareto, stat.gennorm, stat.genexpon, stat.genextreme, stat.gausshyper, stat.gamma,
+            stat.gengamma, stat.genhalflogistic, stat.gibrat, stat.gompertz, stat.gumbel_r, stat.gumbel_l,
+            stat.halfcauchy, stat.halflogistic, stat.halfnorm, stat.halfgennorm, stat.hypsecant, stat.invgamma,
+            stat.invgauss, stat.invweibull, stat.johnsonsb, stat.johnsonsu, stat.laplace, stat.levy,
+            stat.logistic, stat.loggamma, stat.loglaplace, stat.lognorm, stat.lomax, stat.maxwell, stat.mielke,
+            stat.nakagami, stat.norm, stat.pareto, stat.pearson3, stat.powerlaw, stat.powerlognorm, stat.powernorm,
+            stat.rdist, stat.reciprocal, stat.rayleigh, stat.rice, stat.recipinvgauss, stat.semicircular, stat.t,
+            stat.triang, stat.truncexpon, stat.truncnorm, stat.tukeylambda, stat.uniform, stat.vonmises,
+            stat.vonmises_line, stat.wald, stat.weibull_min, stat.weibull_max, stat.wrapcauchy]
+#get name and put to list
+distribution_names = [distr.name for distr in out_distr]
+
 # Tạo giao diện cho người dùng chọn dữ liệu
 st.title('Find Bestfitting And Sum Distribution')
 
 data_option = st.selectbox('Select Data:', ['Upload CSV File', 'Random data (Different size)'])
-method_option = st.selectbox('Select list of distribution:', ['popular', 'full'])
+method_option = st.selectbox('Select list of distribution:', ['popular', 'full',"custom"])
+if method_option=="custom":
+    custom_method = st.selectbox('Select custom method:', distribution_names)
+    method_option = custom_method  # Cập nhật giá trị phương pháp đã chọn
+    st.write(f"Selected custom method: {method_option}")
 # Khởi tạo biến df là None
 df = None
 
