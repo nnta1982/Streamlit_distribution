@@ -4,7 +4,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from distfit import distfit
 import io
-from typing import Literal
 import scipy.stats as stat
 ##update bins with main
 
@@ -70,7 +69,7 @@ method_option = st.selectbox('Select list of distribution:', ['popular', 'full',
 if method_option=="custom":
     custom_method = st.selectbox('Select custom method:', distribution_names)
     method_option = custom_method  # Cập nhật giá trị phương pháp đã chọn
-    st.write(f"Selected custom method: {method_option}")
+    # st.write(f"Selected custom method: {method_option}")
 # Khởi tạo biến df là None
 df = None
 
